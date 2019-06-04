@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
@@ -57,10 +59,42 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
+    console.log("Hello!")
 
-</script>
+    function playSound(e) {
+      // console.log(e.keyCode)
+      const audio = document.querySelector(`audio[data-key="${e.keyCode}"`) // grab audio element with the datakey that corresponds to keycode we pressed
+      const key = document.querySelector(`div[data-key="${e.keyCode}"`) //grab a div with the data-key that corresponds to the keycode we pressed
+      console.log("Key:", key);
+      console.log("Audio file:", audio)
+      key.classList.add("playing");
+
+      if (!audio) return; // stop the function from running all together because the key entered does not correspond to a drum key. 
+      audio.currentTime = 0; // rewind to start. We do this so we can play a sound multiple times in a row without having to wait for the original file to finish playing first. 
+      audio.play(); // If you call .play() and it sees that you're asking it to play the same audio, it's going to wait until the sound has finished playing before playing it from the beginning. 
+    }
+
+    function removeTransition(e) {
+      if (e.propertyName !== 'transform') return; //skips the transition unless it's a transformation animation
+      console.log("Name of transition being removed:", e.propertyName)
+      console.log("This", this);
+      console.log("This.classlist: ", this.classList)
+      this.classList.remove('playing') //removes the playing class from the array of classes returned in the DOMTokenList for the specific div being called
+    }
+
+    const keys = document.querySelectorAll('.key')
+    console.log(keys)
+    keys.forEach(key => { // we must explictly loop over each element and assign an event listener one at a time. 
+      key.addEventListener('transitionend', removeTransition)  // looks for when the key reaches the end of its transition animation and then removes the class that got it to transition in the first place, reversing the animation. 
+      //   key.classList.remove('playing')
+      // })
+    })
+
+    window.addEventListener('keydown', playSound);
+  </script>
 
 
 </body>
+
 </html>
